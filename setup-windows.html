@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows 準備ガイド</title>
+<meta name="description" content="AI と一緒にアプリを作る講座で使うアカウントと道具を、Windows で準備する手順">
+<style>
+:root {
+  --bg: #f7f6f2;
+  --card: #ffffff;
+  --ink: #1f2328;
+  --muted: #5b636d;
+  --line: #dcd9d0;
+  --accent: #2458c6;
+  --accent-ink: #ffffff;
+  --code-bg: #1e2430;
+  --code-ink: #e8ecf2;
+  --ok: #1d7a46;
+  --ok-bg: #e5f4ea;
+  --warn: #8a5a00;
+  --warn-bg: #fdf3dc;
+  --err: #b42318;
+  --tag-bg: #eceae3;
+  --local: #1f7f73;
+  --remote: #2f6fb0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181d;
+    --card: #1e2229;
+    --ink: #e6e8eb;
+    --muted: #a0a8b3;
+    --line: #333a44;
+    --accent: #7ea6ff;
+    --accent-ink: #0f1420;
+    --code-bg: #0e1116;
+    --code-ink: #e8ecf2;
+    --ok: #6fd39a;
+    --ok-bg: #173324;
+    --warn: #f0c060;
+    --warn-bg: #3a2e14;
+    --err: #ff8a80;
+    --tag-bg: #2a3039;
+    --local: #5cc7b8;
+    --remote: #7eb3ea;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Hiragino Sans", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  line-height: 1.75;
+  font-size: 16px;
+}
+main { max-width: 760px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; line-height: 1.4; }
+h2 { font-size: 1.25rem; margin: 44px 0 4px; }
+h2 + .lead-sm { margin-top: 0; }
+h3 { font-size: 1.05rem; margin: 0; line-height: 1.5; }
+p { margin: 8px 0; }
+.lead { color: var(--muted); margin: 0 0 20px; }
+.lead-sm { color: var(--muted); font-size: .95rem; }
+a { color: var(--accent); }
+code { font-family: "Cascadia Mono", Consolas, monospace; font-size: .9em; }
+.progress {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--bg);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.progress-row { display: flex; justify-content: space-between; font-size: .9rem; color: var(--muted); }
+.bar { height: 8px; background: var(--tag-bg); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.bar > div { height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+.box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 12px 0;
+}
+.note { background: var(--warn-bg); border-color: transparent; }
+.note strong { color: var(--warn); }
+ol, ul { padding-left: 1.4em; margin: 8px 0; }
+li { margin: 4px 0; }
+.step.done { border-color: var(--ok); }
+.step-head { display: flex; gap: 12px; align-items: flex-start; }
+.num {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--tag-bg); color: var(--ink);
+  display: grid; place-items: center; font-weight: 700;
+}
+.step.done .num { background: var(--ok); color: #fff; }
+.step-title { flex: 1; min-width: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font-size: .78rem; background: var(--tag-bg); color: var(--muted); padding: 1px 8px; border-radius: 99px; }
+.tag.me { background: var(--warn-bg); color: var(--warn); }
+.check {
+  flex: none; display: flex; align-items: center; gap: 6px;
+  font-size: .9rem; cursor: pointer; user-select: none;
+  padding: 4px 10px; border: 1px solid var(--line); border-radius: 99px;
+}
+.check input { width: 18px; height: 18px; accent-color: var(--ok); margin: 0; }
+.step.done .check { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+.cmd {
+  background: var(--code-bg); color: var(--code-ink);
+  border-radius: 8px; margin: 10px 0;
+  padding: 12px 12px 12px 14px;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.cmd code {
+  flex: 1; min-width: 0; font-size: .88rem;
+  white-space: pre-wrap; word-break: break-all;
+}
+button {
+  font: inherit; font-weight: 700; cursor: pointer;
+  border: 0; border-radius: 8px;
+}
+button.copy { flex: none; font-size: .85rem; background: var(--accent); color: var(--accent-ink); padding: 6px 14px; }
+button.big { background: var(--accent); color: var(--accent-ink); padding: 12px 20px; font-size: 1rem; width: 100%; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.copied { background: var(--ok); color: #fff; }
+button:focus-visible, .check:focus-within, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+label.field { display: block; margin: 14px 0 4px; font-weight: 700; font-size: .95rem; }
+input[type=text] {
+  width: 100%; font: inherit; padding: 8px 10px;
+  border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink);
+}
+input[type=text].bad { border-color: var(--err); }
+.hint { font-size: .85rem; color: var(--muted); margin: 4px 0 0; }
+.err { font-size: .88rem; color: var(--err); margin: 4px 0 0; min-height: 1.3em; }
+.apps { display: grid; gap: 6px; margin: 8px 0; }
+.apps label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.apps input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--accent); flex: none; }
+.apps small { color: var(--muted); display: block; line-height: 1.5; }
+details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; }
+details.plain { background: transparent; border: 0; margin: 8px 0; }
+details.plain summary { padding: 4px 0; font-weight: 400; color: var(--accent); }
+details.plain > div { padding: 0; }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 700; }
+details > div { padding: 0 18px 14px; }
+pre.preview {
+  background: var(--code-bg); color: var(--code-ink);
+  border-radius: 8px; padding: 12px 14px; margin: 8px 0;
+  font-family: "Cascadia Mono", Consolas, monospace; font-size: .8rem;
+  white-space: pre-wrap; word-break: break-all; max-height: 320px; overflow: auto;
+}
+kbd {
+  font-family: inherit; font-size: .85em;
+  border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 4px; padding: 0 5px; background: var(--card);
+}
+.or { text-align: center; color: var(--muted); font-size: .9rem; margin: 18px 0 6px; }
+.map { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 4px; }
+@media (max-width: 560px) { .map { grid-template-columns: 1fr; } }
+.map-side { border: 2px solid; border-radius: 10px; padding: 10px 12px; }
+.map-side.local { border-color: var(--local); }
+.map-side.remote { border-color: var(--remote); }
+.map-side ul { list-style: none; padding-left: 0; margin: 4px 0 0; font-size: .92rem; }
+.map-side li { padding-left: 30px; position: relative; }
+.map-side .ico { position: absolute; left: 0; top: .2em; width: 22px; height: 22px; border-radius: 5px; }
+.map-name { margin: 0; font-weight: 700; font-size: 1.05rem; }
+.map-side.local .map-name { color: var(--local); }
+.map-side.remote .map-name { color: var(--remote); }
+.map-name span { color: var(--muted); font-weight: 400; font-size: .85rem; margin-left: 8px; }
+.reset { font: inherit; font-weight: 400; font-size: .85rem; background: none; color: var(--muted); text-decoration: underline; padding: 0; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Windows 準備ガイド</h1>
+<p class="lead">AI と一緒にアプリを作る講座で使う道具とアカウントを準備します。先に自分の PC(ローカル)、次にインターネットの上(リモート)の順に進めて、終わったら「できた」に印を付けてください。</p>
+
+<div class="progress" aria-live="polite">
+  <div class="progress-row"><span>進み具合</span><span id="progress-text">0 / 0</span></div>
+  <div class="bar"><div id="progress-bar"></div></div>
+</div>
+
+<h2>はじめに</h2>
+<div class="box">
+  <p><strong>必要なもの</strong></p>
+  <ul>
+    <li>Windows 10(64ビット)か Windows 11 の PC</li>
+    <li>18歳以上であること(Antigravity の利用条件)</li>
+    <li>40分くらいの時間(インストールの待ち時間を含む)</li>
+  </ul>
+  <p><strong>道具は2か所に分かれます</strong></p>
+  <div class="map">
+    <div class="map-side local">
+      <p class="map-name">ローカル<span>自分の PC</span></p>
+      <ul>
+        <li><img class="ico" src="data:image/png;base64,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" alt=""><b>Antigravity</b> … AI エージェント。PC のフォルダの中でファイルを作ったり直したりする</li>
+        <li><img class="ico" src="data:image/png;base64,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" alt=""><b>Chrome</b> … 作ったページを開いて確かめる</li>
+        <li><img class="ico" src="data:image/png;base64,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" alt=""><b>Git</b> … セーブ地点を残す</li>
+        <li><img class="ico" src="data:image/png;base64,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" alt=""><b>Node.js</b> … テストを動かす(後の章)</li>
+      </ul>
+    </div>
+    <div class="map-side remote">
+      <p class="map-name">リモート<span>インターネットの上</span></p>
+      <ul>
+        <li><img class="ico" src="data:image/png;base64,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" alt=""><b>GitHub</b> … 作ったものを置いておく場所</li>
+        <li><img class="ico" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAK40lEQVR42u1aW0xUVxtdZ85wvzpeKgIWUgdkkLGiSENtpBZ7sTrTpuAl0jRExCY2Kb7Q8oLjmLZJiU40TRrrC0YTpJe3WmuUCjRpsbZ9sJVqa6EFSzE2Cg7KzJzL+p/OzhxmGBE1aZN/JyeQOfvyrf2t77K/fSSSxH+4WfAfb9aHOTlJGAomCUmSxPOvBqDrOkhCluWowmqaBkmSYLFY/n0ANE2DLMsAAEVRMDw8jJs3bwIAZs2ahezsbFitVtHXYrHcn0Y4w6brOjVNMz26rpMkr1y5wubmZpaWltJmsxEAAXD27Nlcvnw533rrLf7666+muWba7hmAIexUoN59911mZmYKoad6MjIy6PV6hfAzBSFN140aBmnwdmJiAkNDQ/D7/YiLi0N6ejr27NmDtrY2MebZZ5/FM888g7y8PJDEwMAAurq6cPr0aei6DgDYvHkzjhw5AqvVOjMDn+6uG623t5c7duyg3W5nRkYGrVYrk5KSOGfOHAKgLMt0Op387rvvppzvzJkzLCkpEdrYvn07SVJV1QdPIUP4GzdusL6+nnFxcTGpIcsy7XY729vbhUChUIihUIiqqprme+qpp8S4zz77jLquMxQKPTgABi+Hh4e5YsUKsVhqaio3bdrEgwcPsqOjg8eOHaPH42FpaakJzOrVq3n27Fkxn6qq1HWdiqKQJIeGhpiVlUVJkrh8+fJp2dm0ARhe5vbt26yoqBBCbdiwgT///HPUMYqisL29ncXFxaK/xWJhbW0tL1++bAJigGhtbSUASpLE5uZm09zToRTuRp2WlhYhzI4dOyKECAaDYmeNMWNjY/R6vZw9e7bJhXq9Xt66dcukjf7+fqakpFCSJAJgYmIi3W43v//++wj7mzYAY9Dg4CBnzZpFSZJYUVFBRVGoaZrgcvgO+f1+Mdag3qVLl1hbW0tZlgWQoqIinjhxwkSVxYsXCy0Y/VJSUvjhhx/eVRNRARgD9u/fL2jw1VdfCZoY6ifJnp4eVlVVsbCwkIcOHRLvwo2xq6uLq1evFsIVFBQwFAoJoMa7iooKvvnmm4yPjxd9Dx48GBNETA243W5KksTHH388QvDBwUE2NDQwISHBZLilpaU8efKk6BcMBoVNHT58mMnJySwoKOCdO3dEnzVr1hAAq6urhZvNysoSXq2np2dKEJjK86iqSqfTSQDcsmWLADU+Ps7W1laxAACmp6fT4/GwqalJ/FZTU8O+vr6ITVmyZAlzc3MFsHAALpdLCPnNN98wLS2NAFhWViY0NjliTwnA7/ezsLCQAPjGG2+QJI8fPy5AGc+mTZtMgv7www/cvHmzSBdaWlp448YNQT+HwzElALfbbdLa3r17xTqGVidrIaYGDHe4Zs0abt261ST4ihUr+Pnnn0dQhSSPHDliCnjZ2dlsa2ujqqpcunQpc3JyYgIwnMS1a9c4b948AmBDQ8P0AIS7uOrq6ohIm5ubywMHDjAQCEQYa3d3N1etWkUAtNls3LdvH30+H1NTUwmAlZWVnD9/PvPz88X4aAB0XReCut1uAuDKlSuFhwunUUwvtHPnTuHaEhIS2NjYyJGRkQh3+fvvv7Ourk6A3LZtG/v7+8V8f/zxB+vr68V7h8MR1YjDARgOY9euXWLM+Ph4ROaKqTxQT08Pk5OTCYCPPPIIz5w5I/oYu+73+/nOO+8wKSmJADhv3jx2dXWZIvNkl2uz2fjYY48JDWiaxqeffpoA+NJLL0UAaGxsJAAWFxdPD4Cu6wwGgywvLycApqWlsbe3N4Iun3zyiQhAeXl5zMjIYFlZmRAqnKvhSZzT6WROTg4DgYDo89xzz1GWZbpcLlMaQ5IvvvgiAbC8vPzuFDImPHXqlFC31+slSQYCAeq6zr6+Pr7wwgvCR3s8Hl6/fp2PPvooi4qKxMLhixj/a5pGh8PBnJwcsdbFixe5aNEiAuDGjRuF5nRd58jICOfOnUtJkkQaE9OIjZcNDQ2UJIlz587lyMiISaU1NTUiml68eFGMy87OpsPhuCuAoqIi5uXl8Z9//qHH46HVaiUAPv/88+zr66Ou64JeXq9XbOSpU6diAzBUo2kaV65cSQBcv359hMG6XC7Kssx169aJCQOBAHNycuh0Ou9KobKyMmZmZjI/P58AWFhYyI6Ojgj76u3tFYGsvLycwWAw6rHTVNeQJAkTExMYHx8HACxatEiUSUQlzGKBpmkIhULQdV1UIBISEnD16lV8/fXXsFgskGUZqqpCVVXIsgyLxYLu7m78+eefGB0dxd9//429e/fi/Pnz2LhxIxRFAQDExcWhs7MTbrcbfr8fycnJaG1tRXx8PKKefqNFYIfDQQDctWuXiZPhfnnt2rViF+7cucOioiKh7vr6eg4MDIj3/f393LZtm3hfV1fHK1euRHi+a9eusbGxUeRXkiRx586d00vmolFow4YNIqjEAjAxMcH8/HzOnz+flZWV4tTm8/m4b98+UVp58skn2d3dHUGXQCDAAwcOcOHChRGBs7q62hTYYiZz4UYMwGTEkyNjOIBgMMjs7GwuXbqUqqqyra2NCxYsEELExcWxra0tatpx4sQJlpWVmYTeunWrCG7FxcUxzwNRa3svv/wyAOD69es4fPgwJEmCpmmxq8QWi+Dxa6+9hp9++gktLS3IyMiAoij48ssv8eOPPwIA4uPj8csvv2DLli1Yv349zp8/DwAoKSnB8ePHcezYMTgcDgCAqqqYmJgQpZ2YZRWDRqFQSOxKWloav/32W6Ehl8sVVQO5ublcsmRJxDGwr69PuF4AbGpqosfjYXp6uvgtKyuL77//voi0mqaJjNbpdEYNYFNGYkNd3d3dtFgsYoHOzk6S5CuvvBLViAsKCpicnMyPPvpILBROlZMnT0ZULRISEtjQ0MDBwUFT+hEKheh0OilJkkgvpjobx0zmfD6fabHGxkZRoaiqqhJaC4VCtNvtpnJKeE5kGKuiKDx06BAXL17MqqoqcdKanDd1dnaKzfP5fPd+pAxH/MEHH4ikLvzgXVxcbMpZvvjiC5MrlWWZtbW1vHTpUkR+YxQAwoOc8TcUCvGJJ56gJEm02WwcGhq6dw1MBtHb20uXy8XExEQBIjU1lQMDAybBbt26FbWcsmfPHo6NjZnOGqqqMhgMUlEU0+6Gp927d+++a2nlrqXF8MkvXLjAt99+Wyywf/9+of7wfpcvX2Ztba2ggaGx9vZ2U3od3i5cuMB169aJ/qtWreLt27dNacyMy+uTS33Lli2jJElcsGABr169aorW4UDOnj1rKqcYVYvdu3fz6NGj7OjooM/nY01NDVNSUkzH1eHh4WmV3e/pfsCoDHz66adiscrKSo6OjpqSOKOYa2iwvb2ddrvdVOCK9sTHx3P79u28efPmtKpyM7rgMHY4nKvLli0zeZ3J7dy5cywpKRGUmjNnDpOSkmi1WpmZmUm73c7XX3+d586di1rSfyAXHJMvOlRVxauvvoqPP/4YACDLMtauXYvKykrk5eVBkiQMDAygs7MTp0+fFuPr6urQ0tKCsbExKIqC9PR0LFy4EImJiSLzvaeLjpnejxna8Hq907pSyszM5HvvvRdTs9Pd9fuiULSLud9++41NTU1TXuo1NzeL9Dn8ctAQ+n4u+aT7+dSApOlQoygK/vrrL4yOjoIkbDZbxLWq0fdBNelBfCsRfrE91d3xg7rYfigAJhu4MeXD+LTgoQL4/9cqM2j/AwDXuGH1SBNkAAAAAElFTkSuQmCC" alt=""><b>ChatGPT</b> … チャット型 AI。相談とレビューに使う。自分の PC の中には届かない</li>
+      </ul>
+    </div>
+  </div>
+  <p><strong>流れ</strong>(先にローカル、次にリモート)</p>
+  <ol>
+    <li>ローカルをそろえる: Google アカウント → 道具をまとめて入れる → Antigravity にログイン</li>
+    <li>リモートをそろえる: GitHub アカウント → その名前とメールを Git に登録 → ChatGPT アカウント</li>
+    <li>入ったか確かめる</li>
+  </ol>
+  <p class="hint">印はこの PC のブラウザにだけ残ります。パスワードは講師にも教えないでください。画面を共有しているときは、パスワードの入力を映さないようにします。</p>
+</div>
+
+<!-- ============ 1. ローカル ============ -->
+<h2>1. ローカル(自分の PC)をそろえる</h2>
+<p class="lead-sm">自分の PC の中で、AI が作業できるようにします。</p>
+
+<section class="box step" data-step="google">
+  <div class="step-head">
+    <div class="num">1</div>
+    <div class="step-title">
+      <h3>Google アカウント</h3>
+      <div class="tags"><span class="tag me">本人が行う</span><span class="tag">持っていれば不要</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p>Antigravity(AI にファイルを作ったり直したりしてもらうアプリ)へのログインに使います。<b>個人の Google アカウント(@gmail.com)</b>が必要です。学校や会社のアカウントは使えないことがあります。</p>
+  <p>持っていなければ <a href="https://accounts.google.com/signup" target="_blank" rel="noopener">accounts.google.com/signup</a> で作ります。</p>
+</section>
+
+<section class="box step" data-step="tools">
+  <div class="step-head">
+    <div class="num">2</div>
+    <div class="step-title">
+      <h3>準備用ファイルで道具をまとめて入れる</h3>
+      <div class="tags"><span class="tag">15〜30分(ほとんど待ち時間)</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p>ダウンロードした「準備用ファイル」をダブルクリックすると、道具がまとめて入ります。</p>
+
+  <p style="margin-top:16px"><strong>入れる道具</strong>(全部そのままで大丈夫です)</p>
+  <div class="apps" id="apps">
+    <label><input type="checkbox" value="antigravity" checked><span>Antigravity<small>AI にファイルを作ったり直したりしてもらうアプリ</small></span></label>
+    <label><input type="checkbox" value="chrome" checked><span>Chrome<small>AI が作った画面を確かめるときに使うブラウザ。もう入っていれば何も起きません</small></span></label>
+    <label><input type="checkbox" value="git" checked><span>Git<small>作業のセーブポイントを作る道具。名前とメールの登録は手順5でします</small></span></label>
+    <label><input type="checkbox" value="node" checked><span>Node.js<small>自動テスト(作ったものを自動で確かめるしくみ)を動かす道具。使うのは後の章です</small></span></label>
+  </div>
+
+  <p style="margin-top:16px"><button class="big" type="button" id="download">準備用ファイルをダウンロード</button></p>
+  <p class="err" id="form-err" style="text-align:center"></p>
+
+  <details class="plain">
+    <summary>ファイルの中身を見る</summary>
+    <div>
+      <p class="hint">ダウンロードされるのは、この文字だけのファイルです。<code>winget</code> は Windows に最初から入っている、アプリを入れる道具です。</p>
+      <pre class="preview" id="preview"></pre>
+    </div>
+  </details>
+
+  <p style="margin-top:18px"><strong>ダウンロードしたら</strong></p>
+  <ol>
+    <li>ブラウザで「<b>このファイルは危険な可能性があります</b>」などと出たら、「<b>保存</b>」(または「…」→「保持する」)を選ぶ</li>
+    <li>ダウンロードフォルダの <code>school-setup.cmd</code> を<b>ダブルクリック</b>する</li>
+    <li>青い画面で「<b>Windows によって PC が保護されました</b>」と出たら、「<b>詳細情報</b>」→「<b>実行</b>」を押す</li>
+    <li>「このアプリがデバイスに変更を加えることを許可しますか?」と出たら「<b>はい</b>」を押す(何回か出ます)</li>
+    <li>黒い画面に「<b>DONE.</b>」と出るまで待ち、何かキーを押して閉じる</li>
+  </ol>
+  <details class="plain">
+    <summary>黒い画面に出る英語の意味</summary>
+    <div>
+      <ul>
+        <li><code>If Windows asks to allow changes, click YES.</code> … 変更の許可を聞かれたら「はい」を押す</li>
+        <li><code>[1/4] Installing Antigravity ...</code> … 4つのうち1つ目、Antigravity を入れている</li>
+        <li><code>DONE. Next: open Antigravity and sign in with Google.</code> … 終わり。次は Antigravity を開いて Google でログインする</li>
+        <li><code>ERROR: ...</code> … うまくいかなかった。下の「困ったとき」を見る</li>
+      </ul>
+      <p class="hint">winget が出す文(「見つかりました」「インストールが完了しました」など)は日本語で出ます。黒い画面の中は、日本語を書くと Windows が読み違えることがあるため、英語にしています。</p>
+    </div>
+  </details>
+  <div class="box note" style="margin-top:12px">
+    <p><strong>警告を進めてよいのは、このページで作ったファイルだけです。</strong>メールやチャットで知らない人から届いた <code>.cmd</code> などのファイルは、同じ警告が出ても実行しないでください。中身が分からないファイルは、PC を壊したり情報を盗んだりすることがあります。</p>
+  </div>
+
+  <div class="or">ファイルを実行できないとき・警告が進められないとき</div>
+  <details class="plain">
+    <summary>コピーして PowerShell に貼る方法</summary>
+    <div>
+      <ol>
+        <li>スタートボタン(Windows のマーク)を<b>右クリック</b> →「<b>ターミナル</b>」(Windows 10 では「Windows PowerShell」)</li>
+        <li>下の「コピー」を押し、黒か青の画面で右クリック(または <kbd>Ctrl</kbd>+<kbd>V</kbd>)して、<kbd>Enter</kbd></li>
+      </ol>
+      <div class="cmd"><code id="ps-cmd"></code><button class="copy" type="button" id="ps-copy">コピー</button></div>
+    </div>
+  </details>
+</section>
+
+<section class="box step" data-step="login">
+  <div class="step-head">
+    <div class="num">3</div>
+    <div class="step-title">
+      <h3>Antigravity にログインする</h3>
+      <div class="tags"><span class="tag me">本人が行う</span><span class="tag">5分</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <ol>
+    <li>スタートメニューから <b>Antigravity</b> を開く(準備用ファイルの前から開いていたら、一度終了して開き直す)</li>
+    <li>個人の Google アカウントでログインする</li>
+    <li>AI に渡す権限は「<b>Request Review</b>」(毎回確認する)を選ぶ</li>
+  </ol>
+  <p class="hint">ここまでで、ローカルはそろいました。</p>
+</section>
+
+<!-- ============ 2. リモート ============ -->
+<h2>2. リモート(インターネットの上)をそろえる</h2>
+<p class="lead-sm">作ったものを置いておく場所(GitHub)と、相談役の AI(ChatGPT)を用意します。アカウント作成は本人にしかできません。</p>
+
+<section class="box step" data-step="github">
+  <div class="step-head">
+    <div class="num">4</div>
+    <div class="step-title">
+      <h3>GitHub アカウントと、非公開用のメールアドレス</h3>
+      <div class="tags"><span class="tag me">本人が行う</span><span class="tag">10分</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p>GitHub は、作ったものをネット上に保管する場所です。</p>
+  <ol>
+    <li><a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> でアカウントを作る。<b>ユーザー名は本名ではなくニックネーム</b>にする(誰でも見られます)</li>
+    <li>右上の自分のアイコン → <b>Settings</b> → 左の <b>Emails</b> を開く</li>
+    <li>「<b>Keep my email addresses private</b>」に印を付ける</li>
+    <li>その説明の中にある <code>数字+ユーザー名@users.noreply.github.com</code> を控える(次の手順5で使います)</li>
+  </ol>
+  <p class="hint">このアドレスは、作ったものに「誰が変えたか」として残ります。普段のメールアドレスを出さないために使います。</p>
+</section>
+
+<section class="box step" data-step="gitname">
+  <div class="step-head">
+    <div class="num">5</div>
+    <div class="step-title">
+      <h3>GitHub の名前とメールを Git に登録する</h3>
+      <div class="tags"><span class="tag">3分</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p>ローカルの Git に、リモートの GitHub での名前を教えておきます。Git でセーブしたときに「誰がセーブしたか」として残ります。</p>
+
+  <label class="field" for="gh-user">GitHub のユーザー名</label>
+  <input type="text" id="gh-user" autocomplete="off" spellcheck="false" placeholder="例: my-nickname" inputmode="latin">
+  <p class="err" id="gh-user-err"></p>
+
+  <label class="field" for="gh-email">非公開用のメールアドレス(手順4で控えたもの)</label>
+  <input type="text" id="gh-email" autocomplete="off" spellcheck="false" placeholder="例: 12345678+my-nickname@users.noreply.github.com" inputmode="email">
+  <p class="err" id="gh-email-err"></p>
+  <p class="hint">入力はこのページの中だけで使い、どこにも送りません。保存もしません。</p>
+
+  <p style="margin-top:16px"><button class="big" type="button" id="git-download" disabled>登録用ファイルをダウンロード</button></p>
+  <p class="err" id="git-form-err" style="text-align:center">ユーザー名とメールアドレスを入れてください</p>
+
+  <details class="plain">
+    <summary>ファイルの中身を見る</summary>
+    <div><pre class="preview" id="git-preview"></pre></div>
+  </details>
+
+  <p style="margin-top:18px"><strong>ダウンロードしたら</strong></p>
+  <ol>
+    <li>手順2と同じように、ダウンロードフォルダの <code>school-git-name.cmd</code> を<b>ダブルクリック</b>する(警告の進め方も同じ)</li>
+    <li>黒い画面の <code>name :</code> の下にユーザー名、<code>email :</code> の下に非公開用のメールアドレスが出ていることを見る</li>
+    <li>何かキーを押して閉じる</li>
+  </ol>
+
+  <div class="or">ファイルを実行できないとき</div>
+  <details class="plain">
+    <summary>コピーして PowerShell に貼る方法</summary>
+    <div>
+      <p>手順2の「コピーして貼る方法」と同じように、<b>新しく開いた</b> PowerShell に貼って <kbd>Enter</kbd>。</p>
+      <div class="cmd"><code id="git-ps-cmd">(上でユーザー名とメールアドレスを入れてください)</code><button class="copy" type="button" id="git-ps-copy" disabled>コピー</button></div>
+    </div>
+  </details>
+</section>
+
+<section class="box step" data-step="chatgpt">
+  <div class="step-head">
+    <div class="num">6</div>
+    <div class="step-title">
+      <h3>ChatGPT アカウント</h3>
+      <div class="tags"><span class="tag me">本人が行う</span><span class="tag">持っていれば不要</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p>「何を作るか」を質問しながら一緒に決める相談役と、作ったものの見直し(レビュー)に使います。<a href="https://chatgpt.com/" target="_blank" rel="noopener">chatgpt.com</a> で無料のアカウントを作ります。</p>
+  <p class="hint">GitHub とつなぐ設定は、作ったものを GitHub に置いてから(第4章の最初)授業で一緒にやります。今はログインできれば大丈夫です。</p>
+</section>
+
+<!-- ============ 3. 確かめる ============ -->
+<h2>3. 入ったか確かめる</h2>
+
+<section class="box step" data-step="verify">
+  <div class="step-head">
+    <div class="num">7</div>
+    <div class="step-title">
+      <h3>入ったか確かめる</h3>
+      <div class="tags"><span class="tag">2分</span></div>
+    </div>
+    <label class="check"><input type="checkbox">できた</label>
+  </div>
+  <p><b>新しく開いた</b> PowerShell(開き方は手順2の「コピーして貼る方法」)に貼って <kbd>Enter</kbd>。</p>
+  <div class="cmd"><code>git --version; node --version; git config --global --get user.name; git config --global --get user.email</code><button class="copy" type="button">コピー</button></div>
+  <p>次の4行が出れば OK です。</p>
+  <ul>
+    <li><code>git version 2.</code> で始まる行</li>
+    <li><code>v</code> で始まる数字(Node.js)</li>
+    <li>GitHub のユーザー名</li>
+    <li>非公開用のメールアドレス</li>
+  </ul>
+</section>
+
+<h2>困ったとき</h2>
+
+<details>
+  <summary>「ERROR: winget was not found」と出る</summary>
+  <div>
+    <ol>
+      <li><a href="ms-windows-store://pdp/?productid=9NBLGGH4NNS1">Microsoft Store の「アプリ インストーラー」</a>を開き、「入手」か「更新」を押す</li>
+      <li>準備用ファイルをもう一度ダブルクリックする</li>
+      <li>それでもだめなら、Windows Update をしてから PC を再起動する</li>
+    </ol>
+    <p>どうしても使えないときは、下の「公式サイトから手で入れる」で進めます。</p>
+  </div>
+</details>
+
+<details>
+  <summary>「git(node)という名前は認識されません」と出る</summary>
+  <div>
+    <p>PowerShell と Antigravity を<b>両方とも閉じて開き直して</b>ください。入れる前から開いていた画面は、新しく入った道具を見つけられません。それでもだめなら PC を再起動します。</p>
+  </div>
+</details>
+
+<details>
+  <summary>途中で赤い文字や「ERROR」「失敗」が出た</summary>
+  <div>
+    <p>すでに入っているアプリは「既にインストールされています」と出ますが、問題ありません。</p>
+    <p>それ以外で止まったときは、<b>黒い画面を閉じずに撮って</b>講師に送ってください。メールアドレスが写っていたら、その部分は隠します。準備用ファイルは何回実行しても大丈夫です。</p>
+  </div>
+</details>
+
+<details>
+  <summary>公式サイトから手で入れる</summary>
+  <div>
+    <ul>
+      <li>Antigravity: <a href="https://antigravity.google/download" target="_blank" rel="noopener">antigravity.google/download</a>(Windows の「Download for x64」)</li>
+      <li>Chrome: <a href="https://www.google.com/intl/ja_jp/chrome/" target="_blank" rel="noopener">google.com/chrome</a></li>
+      <li>Git: <a href="https://git-scm.com/downloads/win" target="_blank" rel="noopener">git-scm.com/downloads/win</a>(途中の選択肢はすべてそのまま「Next」で OK)</li>
+      <li>Node.js: <a href="https://nodejs.org/ja/download" target="_blank" rel="noopener">nodejs.org/ja/download</a>(「LTS」と書かれた方)</li>
+    </ul>
+    <p>手で入れたときも、名前とメールの登録は手順5で同じようにします(PowerShell は開き直してから)。</p>
+  </div>
+</details>
+
+<details>
+  <summary>AI(Antigravity)に入れてもらってはだめ?</summary>
+  <div>
+    <p>できなくはありませんが、AI は場所の確認を繰り返して進まなくなることがあります。道具を入れるところは、このページで自分で進める方が早く確実です。</p>
+  </div>
+</details>
+
+<p class="hint" style="margin-top:32px">印をすべて消す: <button class="reset" type="button" id="reset">最初からやり直す</button></p>
+
+</main>
+<script>
+(function () {
+  /* ---------- 進み具合 ---------- */
+  var KEY = "setup-windows-done";
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  var state = load();
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".step"));
+  function render() {
+    var done = 0;
+    steps.forEach(function (el) {
+      var on = !!state[el.dataset.step];
+      el.classList.toggle("done", on);
+      el.querySelector(".check input").checked = on;
+      if (on) done++;
+    });
+    document.getElementById("progress-text").textContent = done + " / " + steps.length;
+    document.getElementById("progress-bar").style.width = (done / steps.length * 100) + "%";
+  }
+  steps.forEach(function (el) {
+    el.querySelector(".check input").addEventListener("change", function (e) {
+      state[el.dataset.step] = e.target.checked;
+      save(state);
+      render();
+    });
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    state = {};
+    save(state);
+    render();
+  });
+  render();
+
+  /* ---------- コピー ---------- */
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy") ? resolve() : reject(); } catch (e) { reject(e); } finally { document.body.removeChild(ta); }
+    });
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("button.copy");
+    if (!btn || btn.disabled) return;
+    copyText(btn.parentElement.querySelector("code").textContent).then(function () {
+      btn.textContent = "コピーしました";
+      btn.classList.add("copied");
+    }, function () {
+      btn.textContent = "コピーできません。選んでコピーしてください";
+    });
+    setTimeout(function () { btn.textContent = "コピー"; btn.classList.remove("copied"); }, 2000);
+  });
+
+  /* ---------- ファイルを保存させる ---------- */
+  function downloadText(name, text) {
+    var blob = new Blob([text], { type: "application/octet-stream" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  // .cmd に日本語を書くと、行の位置によって Windows が読み違えることがあるため、ファイルの中は英語だけにする。
+  function cmdHead(L, title, line, admin) {
+    L.push("@echo off");
+    L.push("setlocal");
+    L.push("title " + title);
+    L.push("echo ============================================");
+    L.push("echo  " + line);
+    if (admin) L.push("echo  If Windows asks to allow changes, click YES.");
+    L.push("echo ============================================");
+  }
+  function cmdDone(L, next) {
+    L.push("echo.");
+    L.push("echo ============================================");
+    L.push("echo  DONE.");
+    L.push("echo  Next: " + next);
+    L.push("echo ============================================");
+    L.push("pause");
+    L.push("exit /b 0");
+  }
+  function cmdFail(L, label, msg) {
+    L.push("");
+    L.push(":" + label);
+    L.push("echo ERROR: " + msg);
+    L.push("pause");
+    L.push("exit /b 1");
+  }
+
+  /* ---------- 手順2: 道具を入れる(ローカル) ---------- */
+  var APPS = {
+    antigravity: { id: "Google.Antigravity", label: "Antigravity" },
+    chrome: { id: "Google.Chrome", label: "Chrome" },
+    git: { id: "Git.Git", label: "Git" },
+    node: { id: "OpenJS.NodeJS.LTS", label: "Node.js" }
+  };
+  var ORDER = ["antigravity", "chrome", "git", "node"];
+  var WINGET_FLAGS = "--accept-package-agreements --accept-source-agreements";
+
+  var formErr = document.getElementById("form-err");
+  var dlBtn = document.getElementById("download");
+  var preview = document.getElementById("preview");
+  var psCmd = document.getElementById("ps-cmd");
+  var psCopy = document.getElementById("ps-copy");
+
+  function selectedApps() {
+    return ORDER.filter(function (k) {
+      return document.querySelector('#apps input[value="' + k + '"]').checked;
+    });
+  }
+
+  function buildToolsCmd(apps) {
+    var L = [];
+    cmdHead(L, "School setup", "School setup: installing tools", true);
+    L.push("where winget >nul 2>nul");
+    L.push("if errorlevel 1 goto nowinget");
+    apps.forEach(function (k, i) {
+      L.push("echo.");
+      L.push("echo [" + (i + 1) + "/" + apps.length + "] Installing " + APPS[k].label + " ...");
+      L.push("call winget install -e --id " + APPS[k].id + " " + WINGET_FLAGS);
+    });
+    cmdDone(L, "open Antigravity and sign in with Google.");
+    cmdFail(L, "nowinget", "winget was not found. See the guide page.");
+    return L.join("\r\n") + "\r\n";
+  }
+
+  function buildToolsPs(apps) {
+    return apps.map(function (k) { return "winget install -e --id " + APPS[k].id + " " + WINGET_FLAGS; }).join("; ");
+  }
+
+  function updateTools() {
+    var apps = selectedApps();
+    var ok = apps.length > 0;
+    preview.textContent = buildToolsCmd(ok ? apps : ORDER).replace(/\r\n/g, "\n");
+    dlBtn.disabled = !ok;
+    psCopy.disabled = !ok;
+    formErr.textContent = ok ? "" : "入れる道具を1つ以上選んでください";
+    psCmd.textContent = ok ? buildToolsPs(apps) : "(入れる道具を1つ以上選んでください)";
+  }
+
+  dlBtn.addEventListener("click", function () {
+    if (dlBtn.disabled) return;
+    downloadText("school-setup.cmd", buildToolsCmd(selectedApps()));
+    dlBtn.textContent = "ダウンロードしました(もう一度押すと、もう一度ダウンロード)";
+  });
+  document.querySelectorAll("#apps input").forEach(function (el) { el.addEventListener("change", updateTools); });
+  updateTools();
+
+  /* ---------- 手順5: Git に名前とメールを登録する(リモートの名前をローカルへ) ---------- */
+  var userEl = document.getElementById("gh-user");
+  var emailEl = document.getElementById("gh-email");
+  var userErr = document.getElementById("gh-user-err");
+  var emailErr = document.getElementById("gh-email-err");
+  var gitFormErr = document.getElementById("git-form-err");
+  var gitDlBtn = document.getElementById("git-download");
+  var gitPreview = document.getElementById("git-preview");
+  var gitPsCmd = document.getElementById("git-ps-cmd");
+  var gitPsCopy = document.getElementById("git-ps-copy");
+
+  // GitHub のユーザー名: 英数字とハイフン、39文字まで、ハイフンで始まらない・終わらない・続かない
+  var USER_RE = /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/;
+  var EMAIL_RE = /^(?:(\d+)\+)?([A-Za-z0-9-]+)@users\.noreply\.github\.com$/i;
+
+  // 値は検査済み(英数字・ハイフン・+・@・. だけ)なので、そのまま埋め込める。
+  function buildGitCmd(user, email) {
+    var L = [];
+    cmdHead(L, "School setup (Git name)", "School setup: your name and email for Git", false);
+    L.push('set "GITEXE="');
+    L.push('if exist "%ProgramFiles%\\Git\\cmd\\git.exe" set "GITEXE=%ProgramFiles%\\Git\\cmd\\git.exe"');
+    L.push('if not defined GITEXE if exist "%LOCALAPPDATA%\\Programs\\Git\\cmd\\git.exe" set "GITEXE=%LOCALAPPDATA%\\Programs\\Git\\cmd\\git.exe"');
+    L.push('if not defined GITEXE for /f "delims=" %%G in (\'where git 2^>nul\') do if not defined GITEXE set "GITEXE=%%G"');
+    L.push("if not defined GITEXE goto nogit");
+    L.push('"%GITEXE%" config --global user.name "' + user + '"');
+    L.push('"%GITEXE%" config --global user.email "' + email + '"');
+    L.push("echo.");
+    L.push("echo   name  :");
+    L.push('"%GITEXE%" config --global --get user.name');
+    L.push("echo   email :");
+    L.push('"%GITEXE%" config --global --get user.email');
+    cmdDone(L, "create your ChatGPT account.");
+    cmdFail(L, "nogit", "Git was not found. Finish step 2 first. If you did, restart your PC and run this file again.");
+    return L.join("\r\n") + "\r\n";
+  }
+
+  function buildGitPs(user, email) {
+    return [
+      "$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')",
+      "git config --global user.name '" + user + "'",
+      "git config --global user.email '" + email + "'",
+      "git config --global --get user.name",
+      "git config --global --get user.email"
+    ].join("; ");
+  }
+
+  function updateGit() {
+    var user = userEl.value.trim();
+    var email = emailEl.value.trim();
+    var uMsg = "", eMsg = "";
+
+    if (user && !USER_RE.test(user)) {
+      uMsg = "英数字とハイフン(-)だけ、39文字までです。GitHub の右上のアイコンを押すと出る名前を入れてください。";
+    }
+    var m = EMAIL_RE.exec(email);
+    if (email && !m) {
+      eMsg = "「…@users.noreply.github.com」で終わるアドレスを入れてください(普段のメールアドレスは使いません)。";
+    } else if (m && user && USER_RE.test(user) && m[2].toLowerCase() !== user.toLowerCase()) {
+      eMsg = "メールアドレスの中のユーザー名(" + m[2] + ")が、上のユーザー名と違います。";
+    }
+    userErr.textContent = uMsg;
+    emailErr.textContent = eMsg;
+    userEl.classList.toggle("bad", !!uMsg);
+    emailEl.classList.toggle("bad", !!eMsg);
+
+    var ok = !!(user && email && !uMsg && !eMsg);
+    gitPreview.textContent = buildGitCmd(ok ? user : "<ユーザー名>", ok ? email : "<メールアドレス>").replace(/\r\n/g, "\n");
+    gitDlBtn.disabled = !ok;
+    gitPsCopy.disabled = !ok;
+    gitFormErr.textContent = ok ? "" : "ユーザー名とメールアドレスを入れてください";
+    gitPsCmd.textContent = ok ? buildGitPs(user, email) : "(上でユーザー名とメールアドレスを入れてください)";
+  }
+
+  gitDlBtn.addEventListener("click", function () {
+    if (gitDlBtn.disabled) return;
+    downloadText("school-git-name.cmd", buildGitCmd(userEl.value.trim(), emailEl.value.trim()));
+    gitDlBtn.textContent = "ダウンロードしました(もう一度押すと、もう一度ダウンロード)";
+  });
+  [userEl, emailEl].forEach(function (el) { el.addEventListener("input", updateGit); });
+  updateGit();
+})();
+</script>
+</body>
+</html>
