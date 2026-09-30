@@ -1,0 +1,11 @@
+{
+  "name": "my-project",
+  "private": true,
+  "description": "テストの道具(Playwright Test)を動かすための設定。npm test でテストが走る",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
